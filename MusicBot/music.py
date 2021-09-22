@@ -15,7 +15,14 @@ user_searches = {}
 
 @client.command()
 async def play(ctx, *args):
-    pass
+    if not args:
+        msg = "Usage"
+        await ctx.send(msg)
+        return
+
+    if len(args) > 1 or not str.isdecimal(args[0]):
+        await search(ctx, *args)
+        return
 
 
 @client.command()
@@ -55,13 +62,17 @@ async def search(ctx: discord.ext.commands.context.Context, *args):
         await ctx.send("No results found QAQ")
         return
 
-
     # To do: separate search results in pages
-    user_searches[ctx.author] = matches
     msg = "Search result UWU:\n"
-    for i in range(len(matches)):
-        msg += f"{str(i+1)}. {matches[i][1]}\n"
-    await ctx.send(msg)
+    for i in range(min(len(matches), 5)):
+        msg += f"{str(i+1)}. {matches[i]}\n"
+
+    if len(matches) > 5:
+        msg += "\nUse \\prev or \\next command to flip page, or \\all to show all matches."
+        msg += "\nUse \\play <#> command to play a song."
+    sent = await ctx.send(msg)
+    user_searches[(ctx.author.name, ctx.author.discriminator)] = \
+        {"matches": matches, "page": 1, "message": sent, "display_all": False}
 
 
 def get_matches(keywords):
@@ -74,7 +85,8 @@ def get_matches(keywords):
             matches.append((match_score, file_name))
 
     matches = sorted(matches, key=lambda a: a[0], reverse=True)
-    return matches
+
+    return [match[1] for match in matches]
 
 
 def longest_common_sequence_word(word_list1, word_list2):
@@ -96,6 +108,92 @@ def longest_common_sequence_word(word_list1, word_list2):
                 table[i][j] = max(table[i-1][j], table[i][j-1])
 
     return table[m][n]
+
+
+@client.command("next")
+async def next_page(ctx: discord.ext.commands.context.Context):
+    if (ctx.author.name, ctx.author.discriminator) not in user_searches.keys():
+        msg = "Usage:\nThe \\next command can only be used when displaying matching song list.\n" \
+              "Please use \\search <song name> to display a list of matching songs first to activate this command."
+        await ctx.send(msg)
+        return
+
+    user_search = user_searches[(ctx.author.name, ctx.author.discriminator)]
+    matches = user_search["matches"]
+    page = user_search["page"]
+    message = user_search["message"]
+    display_all = user_search["display_all"]
+
+    if display_all or page * 5 >= len(matches):
+        return
+
+    msg = "Search result UWU:\n"
+    for i in range(page*5, (page+1)*5):
+        if i >= len(matches):
+            break
+        msg += f"{str(i+1)}. {matches[i]}\n"
+
+    msg += "\nUse \\prev or \\next command to flip page, or \\all to show all matches."
+    msg += "\nUse \\play <#> command to play a song."
+
+    await message.edit(content=msg)
+    user_searches[(ctx.author.name, ctx.author.discriminator)]["page"] += 1
+
+
+@client.command("prev")
+async def prev_page(ctx: discord.ext.commands.context.Context):
+    if (ctx.author.name, ctx.author.discriminator) not in user_searches.keys():
+        msg = "Usage:\nThe \\prev command can only be used when displaying matching song list.\n" \
+              "Please use \\search <song name> to display a list of matching songs first to activate this command."
+        await ctx.send(msg)
+        return
+
+    user_search = user_searches[(ctx.author.name, ctx.author.discriminator)]
+    matches = user_search["matches"]
+    page = user_search["page"]
+    message = user_search["message"]
+    display_all = user_search["display_all"]
+
+    if display_all or page == 1:
+        return
+
+    msg = "Search result UWU:\n"
+    for i in range((page-2)*5, (page-1)*5):
+        if i >= len(matches):
+            break
+        msg += f"{str(i+1)}. {matches[i]}\n"
+
+    msg += "\nUse \\prev or \\next command to flip page, or \\all to show all matches."
+    msg += "\nUse \\play <#> command to play a song."
+
+    await message.edit(content=msg)
+    user_searches[(ctx.author.name, ctx.author.discriminator)]["page"] -= 1
+
+
+@client.command("all")
+async def show_all(ctx: discord.ext.commands.context.Context):
+    if (ctx.author.name, ctx.author.discriminator) not in user_searches.keys():
+        msg = "Usage:\nThe \\all command can only be used when displaying matching song list.\n" \
+              "Please use \\search <song name> to display a list of matching songs first to activate this command."
+        await ctx.send(msg)
+        return
+
+    user_search = user_searches[(ctx.author.name, ctx.author.discriminator)]
+    matches = user_search["matches"]
+    message = user_search["message"]
+    display_all = user_search["display_all"]
+
+    if display_all:
+        return
+
+    msg = "Search result UWU:\n"
+    for i in range(len(matches)):
+        msg += f"{str(i+1)}. {matches[i]}\n"
+
+    msg += "\nUse \\play <#> command to play a song."
+
+    await message.edit(content=msg)
+    user_searches[(ctx.author.name, ctx.author.discriminator)]["display_all"] = True
 
 
 if __name__ == "__main__":
