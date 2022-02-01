@@ -15,8 +15,14 @@ user_searches = {}
 
 @client.command()
 async def play(ctx, *args):
-    if not args:
-        msg = "Usage"
+    if str(ctx.channel) != "bot-command":
+        return
+
+    if not args or (ctx.author.name, ctx.author.discriminator) not in user_searches.keys():
+        msg = "Usage (๑ `▽´๑) :\n" \
+              "\\play <#> select a song from search result list to play." \
+              "This command is only activated after \\search.\n" \
+              "\\play <keywords> - equivalent to the \\search command."
         await ctx.send(msg)
         return
 
@@ -24,11 +30,25 @@ async def play(ctx, *args):
         await search(ctx, *args)
         return
 
+    song_num = int(args[0])
+
+    user_search = user_searches[(ctx.author.name, ctx.author.discriminator)]
+    matches = user_search["matches"]
+    message = user_search["message"]
+
+    if song_num > len(matches):
+        msg = f"Only {str(len(matches))} songs found. Number must be within that range. ヽ( ຶ▮ ຶ)ﾉ!!!"
+        await ctx.send(msg)
+        return
+
+    song = matches[song_num]
+
 
 @client.command()
 async def join(ctx: discord.ext.commands.context.Context):
     if str(ctx.channel) != "bot-command":
         return
+
     channel = ctx.author.voice.channel
     if not channel:
         await ctx.send("You are not currently in a voice channel.")
@@ -57,13 +77,17 @@ async def search(ctx: discord.ext.commands.context.Context, *args):
     if str(ctx.channel) != "bot-command":
         return
 
+    if not args:
+        msg = "Usage (๑ `▽´๑) :\n" \
+              "\\search <keywords> - search for a list of songs by name matching to the keywords."
+
     matches = get_matches(args)
     if not matches:
-        await ctx.send("No results found QAQ")
+        await ctx.send("No results found (;´༎ຶД༎ຶ`)")
         return
 
     # To do: separate search results in pages
-    msg = "Search result UWU:\n"
+    msg = "Search result (๑•̀ㅂ•́) ✧:\n"
     for i in range(min(len(matches), 5)):
         msg += f"{str(i+1)}. {matches[i]}\n"
 
@@ -112,9 +136,13 @@ def longest_common_sequence_word(word_list1, word_list2):
 
 @client.command("next")
 async def next_page(ctx: discord.ext.commands.context.Context):
+    if str(ctx.channel) != "bot-command":
+        return
+
     if (ctx.author.name, ctx.author.discriminator) not in user_searches.keys():
-        msg = "Usage:\nThe \\next command can only be used when displaying matching song list.\n" \
-              "Please use \\search <song name> to display a list of matching songs first to activate this command."
+        msg = "Usage (๑ `▽´๑) :\n" \
+              "\\next - display the next (up to 5) matching songs from search result. " \
+              "This command is only activated after \\search."
         await ctx.send(msg)
         return
 
@@ -142,9 +170,14 @@ async def next_page(ctx: discord.ext.commands.context.Context):
 
 @client.command("prev")
 async def prev_page(ctx: discord.ext.commands.context.Context):
+    if str(ctx.channel) != "bot-command":
+        return
+
     if (ctx.author.name, ctx.author.discriminator) not in user_searches.keys():
-        msg = "Usage:\nThe \\prev command can only be used when displaying matching song list.\n" \
-              "Please use \\search <song name> to display a list of matching songs first to activate this command."
+        msg = "Usage (๑ `▽´๑) :\n" \
+              "\\prev - display the previous (up to 5) matching songs from search result. " \
+              "This command is only activated after \\search."
+
         await ctx.send(msg)
         return
 
@@ -172,9 +205,14 @@ async def prev_page(ctx: discord.ext.commands.context.Context):
 
 @client.command("all")
 async def show_all(ctx: discord.ext.commands.context.Context):
+    if str(ctx.channel) != "bot-command":
+        return
+
     if (ctx.author.name, ctx.author.discriminator) not in user_searches.keys():
-        msg = "Usage:\nThe \\all command can only be used when displaying matching song list.\n" \
-              "Please use \\search <song name> to display a list of matching songs first to activate this command."
+        msg = "Usage (๑ `▽´๑) :\n" \
+              "\\all - display all matching songs from search result. " \
+              "This command is only activated after \\search."
+
         await ctx.send(msg)
         return
 
@@ -213,4 +251,4 @@ if __name__ == "__main__":
                     file_name_list.append(file)
 
 
-    client.run("ODE5MTcxMjQyOTc1NDI4NjI4.YEiuqw.X-0est4jXEphoOH3o-YdGMxtF70")
+    client.run("ODE5MTcxMjQyOTc1NDI4NjI4.YEiuqw.qCbaVA6UrodIlGP5eR2kSUw-VnM")
