@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from protected import token
 
 client = commands.Bot(command_prefix="!")
 is_on = True
@@ -28,4 +29,4 @@ async def on_message(message):
     if is_on:
         await message.channel.send(message.content[::-1])
 
-client.run('ODQwODA1NzE3MTI4NjQyNTgw.YJdjWA.2YH9CprXRPan-WRehdHAuUbsmV4')
+client.run(token)

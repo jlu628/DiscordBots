@@ -4,6 +4,7 @@ import difflib
 import argparse
 import os
 import re
+from protected import token
 
 client = commands.Bot(command_prefix="\\")
 
@@ -251,4 +252,4 @@ if __name__ == "__main__":
                     file_name_list.append(file)
 
 
-    client.run("ODE5MTcxMjQyOTc1NDI4NjI4.YEiuqw.qCbaVA6UrodIlGP5eR2kSUw-VnM")
+    client.run(token)
