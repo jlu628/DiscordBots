@@ -1,4 +1,3 @@
-from tkinter import Label
 import discord
 from discord.ext import commands
 from protected import token, API_key
