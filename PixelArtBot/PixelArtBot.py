@@ -55,9 +55,8 @@ async def pixel(ctx: discord.ext.commands.context.Context, *args):
         filename += f"_{'.'.join(file.filename.split('.')[:-1])}"
 
     filename = writeResult(results, filename)
-    sent_filename = '.'.join(file.filename.split('.')[:-1])
-    await ctx.send(file = discord.File(f'{filename}.html', f'{sent_filename}.html'))
-    # os.remove(f"{filename}.html")
+    await ctx.send(file = discord.File(f'{filename}.html', f'{filename}.html'))
+    os.remove(f"{filename}.html")
 
 
 def toPixelArt(img, width):
@@ -111,17 +110,18 @@ async def help(ctx: discord.ext.commands.context.Context):
     This bot makes pixel art from your images attachments! Command format:
     
             **,,pixel [width1] [width2] ... [attachment1] [attachment2] ...**
-                    • widths
-                            - Widths controls how many characters per line in your output. Height (number of lines) will be adjusted automatically.
+                    • **widths**
+                            - Widths controls how many characters per line in your output.
+                            - Height (number of lines) and font size will be adjusted automatically.
                             - Widths should be integers range from 50 to 1000. Values out side of the range will be considered as boundary values.
                             - If multiple attachments are given, each width corresponds one attachment.
                             - If no widths provided, defaulted to 100 for all attachments.
                             - If too much widths provided, the excess ones are ignored.
                             - If not enough widths present, then list will be extended by the last width to fit number of attachments.
-                    • attachments
+                    • **attachments**
                             - Before sending this command, drag your image files into discord to send attachments as command arguments.
                             - Only support image files in jpg/jpeg, png, jfif and bmp format.
-                    • output
+                    • **output**
                             - The bot replies by sending a .html file in the channel.
                             - You can download the html file and view the pixel arts in browser.
                             - The output uses monospace font, which may be overwritten when copied to another text editor and result in glitches.
