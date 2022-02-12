@@ -98,19 +98,27 @@ async def lookup(ctx: discord.ext.commands.context.Context, *args):
 client.remove_command("help")
 @client.command()
 async def help(ctx: discord.ext.commands.context.Context):
-    doc = "This bot allows you to translate discord messages with google translator. List of helpful commands:\n\n"
-    doc += "\t\t ::transl [src lang(optional)] [dest lang] [text]\n"
-    doc += "\t\t\t\t- Source language and destination language must be language codes (see ::langlist for details).\n"
-    doc += "\t\t\t\t- If source language is not provided, the translator auto detects language for you.\n\n"
-    doc += "\t\t ::langlist\n"
-    doc += "\t\t\t\t- Displays a list of language map into abbreviations (codes).\n\n"
-    doc += "\t\t ::hidelanglist\n"
-    doc += "\t\t\t\t- Hide the most recently langlist asked by the current user.\n\n"
-    doc += "\t\t ::lookup [lang1] [lang2] ...\n"
-    doc += "\t\t\t\t- Display a mapping of specified languages into their language abbreviations (codes).\n\n"
-    doc += "\t\t ::detectlang [text]\n"
-    doc += "\t\t\t\t- Detects the language of of provided text.\n\n"
-    doc += "© Copyright 2022 jlu@gatech"
+    doc = """
+    This bot allows you to translate discord messages with google translator. List of helpful commands:
+
+            **::transl [src lang(optional)] [dest lang] [text]**
+                    • Source language and destination language must be language codes (see ::langlist for details).
+                    • If source language is not provided, the translator auto detects language for you.
+
+            **::langlist**
+                    • Displays a list of language map into abbreviations (codes).
+
+            **::hidelanglist**
+                    • Hide the most recently langlist asked by the current user.
+
+            **::lookup [lang1] [lang2] ...**
+                    • Display a mapping of specified languages into their language abbreviations (codes).
+                    
+            **::detectlang [text]**
+                    • Detects the language of of provided text.
+
+© Copyright 2022 jlu@gatech
+    """
     await ctx.send(doc)
 
 
