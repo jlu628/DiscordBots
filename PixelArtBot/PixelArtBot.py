@@ -13,18 +13,18 @@ asciis = " .:-=+*#%@"
 @client.command()
 async def pixel(ctx: discord.ext.commands.context.Context, *args):
     if not ctx.message.attachments:
-        await ctx.send("Wrong format")
+        await ctx.send("Please send one or more image attachments with this command. Use ,,help for more information.")
         return
 
     files = ctx.message.attachments
 
     for file in files:
         if not (file.url.endswith('jpg') or file.url.endswith('png') or file.url.endswith('jpeg') or file.url.endswith('jfif') or file.url.endswith('bmp')):
-            await ctx.send("Wrong format")
+            await ctx.send("Wrong file format. Only support image files in jpg/jpeg, png, jfif or bmp format.")
             return
     for a in args:
         if not a.isdecimal:
-            await ctx.send("Wrong format")
+            await ctx.send(f"Invalid command parameter {a} detected. Parameters must be positive integer values. Use ,,help for more information.")
             return
 
     dim = [a for a in args] if args else [100]
@@ -88,7 +88,6 @@ def writeResult(pixel_art, filename, width):
         """
         fh.write(content);
     return filename
-
 
 
 client.remove_command("help")
