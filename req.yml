@@ -41,6 +41,9 @@ dependencies:
     - httpx==0.13.3
     - hyperframe==5.2.0
     - idna==2.10
+    - numpy==1.22.2
+    - pdfkit==1.0.0
+    - pillow==9.0.1
     - pycparser==2.21
     - pynacl==1.5.0
     - requests==2.27.1
@@ -48,4 +51,5 @@ dependencies:
     - sniffio==1.2.0
     - soupsieve==2.3.1
     - urllib3==1.26.8
+    - wkhtmltopdf==0.2
 prefix: C:\Users\Jerry\miniconda3\envs\discordbots

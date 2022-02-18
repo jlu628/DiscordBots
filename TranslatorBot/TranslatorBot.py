@@ -1,13 +1,13 @@
+from base64 import decode
+from chardet import detect
 import discord
 from discord.ext import commands
 from protected import token, API_key
 from deep_translator import GoogleTranslator, single_detection
+from languages import lang_to_code, code_to_lang, detect_only, detect_to_translator
 
-langs_to_code = GoogleTranslator.get_supported_languages(as_dict=True)
-code_to_lang = {v: k.title() for k, v in langs_to_code.items()}
 client = commands.Bot(command_prefix="::")
 sent_langlists = {}
-
 
 @client.command()
 async def transl(ctx: discord.ext.commands.context.Context, *args):
@@ -44,6 +44,13 @@ async def transl(ctx: discord.ext.commands.context.Context, *args):
         # only dest language is given
         text = raw_message[raw_message.index(lan1) + len(lan1):]
         detected_lang = single_detection(text, api_key=API_key)
+
+        if detected_lang in detect_only:
+            await ctx.send(f"Detected source language is {detect_only[detected_lang]}, which is currently not supported by the translator. Use ::langlist to see all supported langauages.")
+            return
+        elif detected_lang in detect_to_translator:
+            detected_lang = detect_to_translator[detected_lang]
+
         translated = GoogleTranslator(source=detected_lang, target=lan1).translate(text=text)
         await ctx.send(f"No source language provided, detected language is {code_to_lang[detected_lang]}:\n" + translated)
 
@@ -52,8 +59,17 @@ async def transl(ctx: discord.ext.commands.context.Context, *args):
 async def detectlang(ctx: discord.ext.commands.context.Context):
     raw_message = ctx.message.content
     text = raw_message[raw_message.index("::detectlang") + len("::detectlang"):]
-    detected_lang = single_detection(text, api_key=API_key)
-    await ctx.send(f"Detected language: {code_to_lang[detected_lang]}")
+    detected_code = single_detection(text, api_key=API_key)
+
+    msg = "Detected language: "
+    if detected_code in code_to_lang.keys():
+        msg += code_to_lang[detected_code]
+    elif detected_code in detect_to_translator.keys():
+        msg += code_to_lang[detect_to_translator[detected_code]]
+    else:
+        msg += detect_only[detected_code]
+        msg += "\nNote: the translator does not currently support this language, it can only be detected."
+    await ctx.send(msg)
 
 
 @client.command()
@@ -84,11 +100,13 @@ async def lookup(ctx: discord.ext.commands.context.Context, *args):
     msg = ""
     unfound = []
     for target_lang in args:
-        if target_lang.lower() not in langs_to_code:
-            unfound.append(target_lang)
+        if target_lang.lower() in lang_to_code:
+            msg += f"{target_lang}: {lang_to_code[target_lang.lower()]}\n"
+        elif target_lang.lower().includes("chinese"):
+            msg += "Chinese (Simplified): zh-CN\nChinese (Traditional): zh-TW"
         else:
-            msg += f"{target_lang}: {langs_to_code[target_lang.lower()]}\n"
-    
+            unfound.append(target_lang)
+
     if unfound:
         msg += f"The following languages are not found: {', '.join(unfound)}"
 
