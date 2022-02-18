@@ -22,9 +22,9 @@ This bot allows you to translate discord messages with google translator. List o
 [Invite Translator Bot to your server](https://discord.com/api/oauth2/authorize?client_id=935800920535605290&permissions=75776&scope=bot)
 
 
-## Pixel Art Bot
-This bot makes pixel art from your images attachments! Command format:
-- **,,pixel [width1] [width2] ... [attachment1] [attachment2] ...**
+## ASCII Art Bot
+This bot makes ASCII art from your images attachments! Command format:
+- **,,ascii [width1] [width2] ... [attachment1] [attachment2] ...**
   - **widths**
     - Widths controls how many characters per line in your output. Height (number of lines) and font size will be adjusted automatically.
     - Widths should be integers range from 50 to 1000. Values out side of the range will be considered as boundary values.
