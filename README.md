@@ -40,4 +40,4 @@ This bot makes ASCII art from your images attachments! Command format:
     - You can download the html file and view the pixel arts in browser.
     - The output uses monospace font, which may be overwritten when copied to another text editor and result in glitches.
 
-[Invite Pixel Art Bot to your server](https://discord.com/oauth2/authorize?client_id=940259038636171326&permissions=108544&scope=bot)
+[Invite ASCII Art Bot to your server](https://discord.com/oauth2/authorize?client_id=940259038636171326&permissions=108544&scope=bot)
